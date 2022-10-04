@@ -37,7 +37,7 @@
             this.ClientSize = new System.Drawing.Size(801, 447);
             this.Name = "Game_Form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Connect The Chips";
             this.ResumeLayout(false);
 
         }

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Connect_The_Chips
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         /// Главная точка входа для приложения.
