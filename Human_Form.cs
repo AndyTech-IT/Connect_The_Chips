@@ -108,8 +108,8 @@ namespace Connect_The_Chips.Players
                         _buttons[i].BackgroundImage = T_Chips[0];
                         break;
                 }
-                _buttons[i].BackColor = _not_placed_color;
             }
+            Reset_TSMI_Click(this, EventArgs.Empty);
 
             Update_PB();
         }
@@ -150,8 +150,8 @@ namespace Connect_The_Chips.Players
                 SolidBrush b = new SolidBrush(Color.White);
                 SolidBrush b2 = new SolidBrush(Color.Black);
 
-                int chip_bg_border = (int)(CHIP_BG_BORDER * ((double)_cell_size / CHIP_BG_SIZE)) + 1;
-                int chip_border = (int)(CHIP_BORDER * ((double)_cell_size / CHIP_SIZE)) + 1;
+                int chip_bg_border = (int)Math.Ceiling(CHIP_BG_BORDER * ((double)_cell_size / CHIP_BG_SIZE));
+                int chip_border = (int)Math.Ceiling((CHIP_BORDER * ((double)_cell_size / CHIP_SIZE)));
 
                 // Draw chips bg
                 foreach (var gameoOject in _all)
@@ -167,8 +167,8 @@ namespace Connect_The_Chips.Players
                 {
                     if (gameoOject.X == -1 && gameoOject.Y == -1)
                         continue;
-                    Point start = new Point(gameoOject.X * _cell_size - chip_bg_border + chip_border, gameoOject.Y * _cell_size - chip_bg_border + chip_border);
-                    g.DrawImage(Get_Chip_Image(gameoOject), start.X, start.Y, _cell_size + (chip_bg_border - chip_border) * 2, _cell_size + (chip_bg_border - chip_border) * 2);
+                    Point start = new Point(gameoOject.X * _cell_size - chip_border, gameoOject.Y * _cell_size - chip_border);
+                    g.DrawImage(Get_Chip_Image(gameoOject), start.X, start.Y, _cell_size + chip_border * 2, _cell_size + chip_border * 2);
                 }
             }
             Map_PB.Refresh();
@@ -246,7 +246,7 @@ namespace Connect_The_Chips.Players
             {
                 g.Clear(Color.White);
 
-                Pen p = new Pen(Color.Black, 2);
+                Pen p = new Pen(Color.White, 2);
                 for (int y = 1; y < _mesh_height; y++)
                     g.DrawLine(p, 0, y * _cell_size, _image_width, y * _cell_size);
                 for (int x = 1; x < _mesh_width; x++)
@@ -282,6 +282,8 @@ namespace Connect_The_Chips.Players
         {
             if (sender is Button b)
             {
+                if (_hover_chip != null)
+                    _hover_chip.Position = new Point(-1);
                 _hover_chip_id = int.Parse(b.Tag.ToString());
                 _hover_chip = _placement_chips[_hover_chip_id];
                 b.BackColor = _not_placed_color;
@@ -326,8 +328,11 @@ namespace Connect_The_Chips.Players
 
         private void Reset_TSMI_Click(object sender, EventArgs e)
         {
-            foreach (var c in _placement_chips)
-                c.Position = new Point(-1);
+            for (int i = 0; i < Game_Controller.CHIPS_PACK_SIZE; i++)
+            {
+                _buttons[i].BackColor = _not_placed_color;
+                _placement_chips[i].Position = new Point(-1);
+            }
             Update_PB();
         }
     }
