@@ -17,15 +17,17 @@ namespace Connect_The_Chips.Players
 {
     public partial class Human_Form : Form
     {
+        private const int CHIP_BG_SIZE = 256;
+        private const int CHIP_BG_BORDER = 6;
         private const int CHIP_SIZE = 256;
-        private const int CHIP_BORDER = 5;
+        private const int CHIP_BORDER = 3;
 
         private Bitmap[] L_Chips;
         private Bitmap[] T_Chips;
         private Bitmap[] I_Chips;
-
         private Bitmap[] Nodes;
         private Bitmap Obstruction;
+        private Bitmap Chip_BG;
 
         public Round_Result Result => _result;
         private Round_Result _result;
@@ -45,6 +47,11 @@ namespace Connect_The_Chips.Players
         private Connection_Node[] _nodes;
         private Connection_Chip[] _placement_chips;
         private Connection_Chip[] _placed_chips;
+
+
+        private Color _placed_color = Color.GreenYellow;
+        private Color _not_placed_color = Color.Yellow;
+        private int _hover_chip_id;
         private Connection_Chip _hover_chip;
 
         private GameObject[] _all => 
@@ -53,6 +60,11 @@ namespace Connect_The_Chips.Players
             .Union(_placed_chips.Cast<GameObject>())
             .Union(_obstructions.Cast<GameObject>())
             .OrderBy(o=>-o.Y).ThenBy(o=>-o.X).ToArray();
+        private GameObject[] _all_chips =>
+            _nodes.Cast<GameObject>()
+            .Union(_placement_chips.Cast<GameObject>())
+            .Union(_placed_chips.Cast<GameObject>())
+            .OrderBy(o => -o.Y).ThenBy(o => -o.X).ToArray();
 
         private Button[] _buttons;
         public Human_Form(Human_Player player)
@@ -60,158 +72,45 @@ namespace Connect_The_Chips.Players
             InitializeComponent();
             _buttons = new Button[] { button1, button2, button3 };
             _hover_chip = null;
+            _hover_chip_id = -1;
             _player = player;
         }
 
         private void Init_ChipsImages()
         {
-            Pen pen = new Pen(Color.Black, CHIP_SIZE / 6);
-            Point p = new Point(CHIP_SIZE / 2, CHIP_SIZE / 2);
-            int center = CHIP_SIZE / 2;
+            Chip_BG = new Bitmap(Resources.Chip_BG);
+            Obstruction = new Bitmap(Resources.Chip_BG);
 
-            L_Chips = new Bitmap[4];
-            T_Chips = new Bitmap[4];
-            I_Chips = new Bitmap[4];
-            Nodes = new Bitmap[4];
-            for (int i = 0; i < 4; i++)
-            {
-                L_Chips[i] = new Bitmap(CHIP_SIZE, CHIP_SIZE);
-                T_Chips[i] = new Bitmap(CHIP_SIZE, CHIP_SIZE);
-                Nodes[i] = new Bitmap(CHIP_SIZE, CHIP_SIZE);
-            }
-
-            I_Chips[0] = I_Chips[2] = new Bitmap(CHIP_SIZE, CHIP_SIZE);
-            I_Chips[1] = I_Chips[3] = new Bitmap(CHIP_SIZE, CHIP_SIZE);
-
-            using (var g = Graphics.FromImage(L_Chips[0]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(center, CHIP_SIZE));
-                g.DrawLine(pen, p, new Point(CHIP_SIZE, center));
-            }
-
-            using (var g = Graphics.FromImage(L_Chips[1]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(center, 0));
-                g.DrawLine(pen, p, new Point(CHIP_SIZE, center));
-            }
-
-            using (var g = Graphics.FromImage(L_Chips[2]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(center, 0));
-                g.DrawLine(pen, p, new Point(0, center));
-            }
-
-            using (var g = Graphics.FromImage(L_Chips[3]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(center, CHIP_SIZE));
-                g.DrawLine(pen, p, new Point(0, center));
-            }
-
-
-            using (var g = Graphics.FromImage(T_Chips[0]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(center, CHIP_SIZE));
-                g.DrawLine(pen, new Point(0, center), new Point(CHIP_SIZE, center));
-            }
-
-            using (var g = Graphics.FromImage(T_Chips[1]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(CHIP_SIZE, center));
-                g.DrawLine(pen, new Point(center, 0), new Point(center, CHIP_SIZE));
-            }
-
-            using (var g = Graphics.FromImage(T_Chips[2]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(center, 0));
-                g.DrawLine(pen, new Point(0, center), new Point(CHIP_SIZE, center));
-            }
-
-            using (var g = Graphics.FromImage(T_Chips[3]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, p, new Point(0, center));
-                g.DrawLine(pen, new Point(center, 0), new Point(center, CHIP_SIZE));
-            }
-
-
-            using (var g = Graphics.FromImage(I_Chips[0]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, new Point(0, center), new Point(CHIP_SIZE, center));
-            }
-
-            using (var g = Graphics.FromImage(I_Chips[1]))
-            {
-                g.Clear(Color.White);
-                g.DrawLine(pen, new Point(center, 0), new Point(center, CHIP_SIZE));
-            }
-
-            using (var g = Graphics.FromImage(Nodes[0]))
-            {
-                g.Clear(Color.Gray);
-                g.DrawLine(pen, p, new Point(CHIP_SIZE, center));
-            }
-
-            using (var g = Graphics.FromImage(Nodes[1]))
-            {
-                g.Clear(Color.Gray);
-                g.DrawLine(pen, p, new Point(center, 0));
-            }
-
-            using (var g = Graphics.FromImage(Nodes[2]))
-            {
-                g.Clear(Color.Gray);
-                g.DrawLine(pen, p, new Point(0, center));
-            }
-
-            using (var g = Graphics.FromImage(Nodes[3]))
-            {
-                g.Clear(Color.Gray);
-                g.DrawLine(pen, p, new Point(center, CHIP_SIZE));
-            }
-
-            pen = new Pen(Color.DarkGray, CHIP_BORDER * 2);
-            Pen pen2 = new Pen(Color.LightGray, CHIP_BORDER * 2);
-
-            Obstruction = new Bitmap(CHIP_SIZE, CHIP_SIZE);
-            using (var g = Graphics.FromImage(Obstruction))
-            {
-                g.Clear(Color.Gray);
-                g.DrawLine(pen2, 0, 0, 0, CHIP_SIZE);
-                g.DrawLine(pen2, 0, 0, CHIP_SIZE, 0);
-                g.DrawLine(pen, CHIP_SIZE, CHIP_SIZE, 0, CHIP_SIZE);
-                g.DrawLine(pen, CHIP_SIZE, CHIP_SIZE, CHIP_SIZE, 0);
-            }
-            foreach (Bitmap[] arr in new Bitmap[][] { L_Chips, T_Chips, I_Chips, Nodes })
-                foreach (var image in arr)
-                    using (var g = Graphics.FromImage(image))
-                    {
-                        g.DrawLine(pen2, 0, 0, 0, CHIP_SIZE);
-                        g.DrawLine(pen2, 0, 0, CHIP_SIZE, 0);
-                        g.DrawLine(pen, CHIP_SIZE, CHIP_SIZE, 0, CHIP_SIZE);
-                        g.DrawLine(pen, CHIP_SIZE, CHIP_SIZE, CHIP_SIZE, 0);
-                    }
+            L_Chips = new Bitmap[4] { new Bitmap(Resources.L_0), new Bitmap(Resources.L_90), new Bitmap(Resources.L_180), new Bitmap(Resources.L_270)};
+            T_Chips = new Bitmap[4] { new Bitmap(Resources.T_0), new Bitmap(Resources.T_90), new Bitmap(Resources.T_180), new Bitmap(Resources.T_270) };
+            I_Chips = new Bitmap[4] { new Bitmap(Resources.I_0), new Bitmap(Resources.I_90), new Bitmap(Resources.I_0), new Bitmap(Resources.I_90), };
+            Nodes = new Bitmap[4] { new Bitmap(Resources.Node_0), new Bitmap(Resources.Node_90), new Bitmap(Resources.Node_180), new Bitmap(Resources.Node_270), };
         }
 
         public void Get_Pack(Chips_Pack pack)
         {
+            _placement_chips = new Connection_Chip[Game_Controller.CHIPS_PACK_SIZE];
             for (int i = 0; i < Game_Controller.CHIPS_PACK_SIZE; i++)
             {
-                if (pack.Chips[i] is T_Chip)
-                    _buttons[i].Text = "T";
-                else if (pack.Chips[i] is L_Chip)
-                    _buttons[i].Text = "L";
-                else if (pack.Chips[i] is I_Chip)
-                    _buttons[i].Text = "I";
+                switch (pack.Chips[i])
+                {
+                    case Chips_Type.I_Chip:
+
+                        _placement_chips[i] = new I_Chip();
+                        _buttons[i].BackgroundImage = I_Chips[0];
+                        break;
+                    case Chips_Type.L_Chip:
+                        _placement_chips[i] = new L_Chip();
+                        _buttons[i].BackgroundImage = L_Chips[0];
+                        break;
+                    case Chips_Type.T_Chip:
+                        _placement_chips[i] = new T_Chip();
+                        _buttons[i].BackgroundImage = T_Chips[0];
+                        break;
+                }
+                _buttons[i].BackColor = _not_placed_color;
             }
-            _placement_chips = pack.Chips;
+
             Update_PB();
         }
 
@@ -240,6 +139,7 @@ namespace Connect_The_Chips.Players
         private void Human_Form_MouseUp(object sender, MouseEventArgs e)
         {
             _hover_chip = null;
+            _hover_chip_id = -1;
         }
 
         private void Update_PB()
@@ -250,51 +150,94 @@ namespace Connect_The_Chips.Players
                 SolidBrush b = new SolidBrush(Color.White);
                 SolidBrush b2 = new SolidBrush(Color.Black);
 
+                int chip_bg_border = (int)(CHIP_BG_BORDER * ((double)_cell_size / CHIP_BG_SIZE)) + 1;
                 int chip_border = (int)(CHIP_BORDER * ((double)_cell_size / CHIP_SIZE)) + 1;
 
+                // Draw chips bg
                 foreach (var gameoOject in _all)
                 {
                     if (gameoOject.X == -1 && gameoOject.Y == -1)
                         continue;
-                    Point start = new Point(gameoOject.X * _cell_size - chip_border, gameoOject.Y * _cell_size - chip_border);
-                    g.DrawImage(Get_Image(gameoOject), start.X, start.Y, _cell_size + chip_border*2, _cell_size + chip_border*2);
+                    Point start = new Point(gameoOject.X * _cell_size - chip_bg_border, gameoOject.Y * _cell_size - chip_bg_border);
+                    g.DrawImage(Get_BG_Image(gameoOject), start.X, start.Y, _cell_size + chip_bg_border * 2, _cell_size + chip_bg_border * 2);
+                }
+
+                // Draw chip
+                foreach (var gameoOject in _all_chips)
+                {
+                    if (gameoOject.X == -1 && gameoOject.Y == -1)
+                        continue;
+                    Point start = new Point(gameoOject.X * _cell_size - chip_bg_border + chip_border, gameoOject.Y * _cell_size - chip_bg_border + chip_border);
+                    g.DrawImage(Get_Chip_Image(gameoOject), start.X, start.Y, _cell_size + (chip_bg_border - chip_border) * 2, _cell_size + (chip_bg_border - chip_border) * 2);
                 }
             }
             Map_PB.Refresh();
         }
 
-        private Image Get_Image(GameObject gameObject)
+        private Bitmap Get_BG_Image(GameObject gameObject)
         {
-            Bitmap image;
-            if (gameObject is L_Chip)
-                image = new Bitmap(L_Chips[(int)gameObject.Rotation]);
-            else if (gameObject is T_Chip)
-                image = new Bitmap(T_Chips[(int)gameObject.Rotation]);
-            else if (gameObject is I_Chip)
-                image = new Bitmap(I_Chips[(int)gameObject.Rotation]);
-            else if (gameObject is Connection_Node)
-                image = new Bitmap(Nodes[(int)gameObject.Rotation]);
-            else if (gameObject is Obstruction)
-                image = new Bitmap(Obstruction);
-            else
-                throw new IndexOutOfRangeException($"Type {gameObject.GetType()} dont supports!");
+            Bitmap result = new Bitmap(Chip_BG);
 
-            Pen eracer = new Pen(Color.Transparent, CHIP_BORDER*2);
-            using (var g = Graphics.FromImage(image))
+            GameObject up = _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y - 1);
+            GameObject down = _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y + 1);
+            GameObject right = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X + 1);
+            GameObject left = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X - 1);
+
+            // Cut bg
+            Pen eracer = new Pen(Color.Transparent, CHIP_BG_BORDER * 2);
+            using (var bg_graphics = Graphics.FromImage(result))
             {
-                g.CompositingMode = CompositingMode.SourceCopy;
-                if (gameObject.Y == Game_Controller.MAP_HEIGHT - 1 || _all.Any(o => o.X == gameObject.X && o.Y == gameObject.Y + 1))
-                    g.DrawLine(eracer, 0, CHIP_SIZE, CHIP_SIZE, CHIP_SIZE);
-                if (gameObject.Y == 0 || _all.Any(o => o.X == gameObject.X && o.Y == gameObject.Y - 1))
-                    g.DrawLine(eracer, 0, 0, CHIP_SIZE, 0);
-                
-                if (gameObject.X == Game_Controller.MAP_WIDTH - 1 || _all.Any(o => o.Y == gameObject.Y && o.X == gameObject.X + 1))
-                    g.DrawLine(eracer, CHIP_SIZE, 0, CHIP_SIZE, CHIP_SIZE);
-                if (gameObject.X == 0 || _all.Any(o => o.Y == gameObject.Y && o.X == gameObject.X - 1))
-                    g.DrawLine(eracer, 0, 0, 0, CHIP_SIZE);
+                bg_graphics.CompositingMode = CompositingMode.SourceCopy;
+                if (up != null)
+                    bg_graphics.DrawLine(eracer, 0, 0, CHIP_BG_SIZE, 0);
+                if (down != null)
+                    bg_graphics.DrawLine(eracer, 0, CHIP_BG_SIZE, CHIP_BG_SIZE, CHIP_BG_SIZE);
+
+                if (right != null)
+                    bg_graphics.DrawLine(eracer, CHIP_BG_SIZE, 0, CHIP_BG_SIZE, CHIP_BG_SIZE);
+                if (left != null)
+                    bg_graphics.DrawLine(eracer, 0, 0, 0, CHIP_BG_SIZE);
             }
 
-            return image;
+            return result;
+        }
+
+        private Bitmap Get_Chip_Image(GameObject gameObject)
+        {
+            Bitmap chip_image;
+            if (gameObject is L_Chip)
+                chip_image = new Bitmap(L_Chips[(int)gameObject.Rotation]);
+            else if (gameObject is T_Chip)
+                chip_image = new Bitmap(T_Chips[(int)gameObject.Rotation]);
+            else if (gameObject is I_Chip)
+                chip_image = new Bitmap(I_Chips[(int)gameObject.Rotation]);
+            else if (gameObject is Connection_Node)
+                chip_image = new Bitmap(Nodes[(int)gameObject.Rotation]);
+            else
+                throw new IndexOutOfRangeException($"Type {gameObject.GetType()} dont support chip image!");
+
+            GameObject up = _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y - 1);
+            GameObject down = _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y + 1);
+            GameObject right = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X + 1);
+            GameObject left = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X - 1);
+
+            // Cut chip
+            Pen eracer = new Pen(Color.Transparent, CHIP_BORDER * 2);
+            using (var chip_graphics = Graphics.FromImage(chip_image))
+            {
+                chip_graphics.CompositingMode = CompositingMode.SourceCopy;
+                if (up is Connection_Chip u_chip && u_chip.Connections.Contains(Direction.Bottom))
+                    chip_graphics.DrawLine(eracer, 0, 0, CHIP_SIZE, 0);
+                if (down is Connection_Chip d_chip && d_chip.Connections.Contains(Direction.Top))
+                    chip_graphics.DrawLine(eracer, 0, CHIP_SIZE, CHIP_SIZE, CHIP_SIZE);
+
+                if (left is Connection_Chip l_chip && l_chip.Connections.Contains(Direction.Right))
+                    chip_graphics.DrawLine(eracer, 0, 0, 0, CHIP_SIZE);
+                if (right is Connection_Chip r_chip && r_chip.Connections.Contains(Direction.Left))
+                    chip_graphics.DrawLine(eracer, CHIP_SIZE, 0, CHIP_SIZE, CHIP_SIZE);
+            }
+
+            return chip_image;
         }
 
         private void Draw_Map()
@@ -322,7 +265,11 @@ namespace Connect_The_Chips.Players
                     Update_PB();
                 }
                 if (e.Button == MouseButtons.Left)
+                {
+                    _buttons[_hover_chip_id].BackColor = _placed_color;
                     _hover_chip = null;
+                    _hover_chip_id = -1;
+                }
             }
         }
 
@@ -335,7 +282,9 @@ namespace Connect_The_Chips.Players
         {
             if (sender is Button b)
             {
-                _hover_chip = _placement_chips[int.Parse(b.Tag.ToString())];
+                _hover_chip_id = int.Parse(b.Tag.ToString());
+                _hover_chip = _placement_chips[_hover_chip_id];
+                b.BackColor = _not_placed_color;
             }
         }
 
@@ -364,10 +313,12 @@ namespace Connect_The_Chips.Players
 
         private void Accept_TSMI_Click(object sender, EventArgs e)
         {
-            _result = new Round_Result() { Placed_Chips = _placement_chips };
+            _result = new Round_Result(_placement_chips);
+            Connection_Chip[] temp = _placement_chips;
             if (_player.Try_Play(Result))
             {
-                _placed_chips = _placed_chips.Union(_placement_chips).ToArray();
+                _placed_chips = _placed_chips.Union(temp).ToArray();
+                Update_PB();
             }
             else
                 Reset_TSMI_Click(sender, e);

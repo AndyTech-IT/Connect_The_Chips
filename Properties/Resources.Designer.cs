@@ -63,9 +63,9 @@ namespace Connect_The_Chips.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap L_Chip_0 {
+        internal static System.Drawing.Bitmap Chip_BG {
             get {
-                object obj = ResourceManager.GetObject("L_Chip_0", resourceCulture);
+                object obj = ResourceManager.GetObject("Chip_BG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Connect_The_Chips.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap L_Chip_180 {
+        internal static System.Drawing.Bitmap I_0 {
             get {
-                object obj = ResourceManager.GetObject("L_Chip_180", resourceCulture);
+                object obj = ResourceManager.GetObject("I_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace Connect_The_Chips.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap L_Chip_270 {
+        internal static System.Drawing.Bitmap I_90 {
             get {
-                object obj = ResourceManager.GetObject("L_Chip_270", resourceCulture);
+                object obj = ResourceManager.GetObject("I_90", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,119 @@ namespace Connect_The_Chips.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap L_Chip_90 {
+        internal static System.Drawing.Bitmap L_0 {
             get {
-                object obj = ResourceManager.GetObject("L_Chip_90", resourceCulture);
+                object obj = ResourceManager.GetObject("L_0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap L_180 {
+            get {
+                object obj = ResourceManager.GetObject("L_180", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap L_270 {
+            get {
+                object obj = ResourceManager.GetObject("L_270", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap L_90 {
+            get {
+                object obj = ResourceManager.GetObject("L_90", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Node_0 {
+            get {
+                object obj = ResourceManager.GetObject("Node_0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Node_180 {
+            get {
+                object obj = ResourceManager.GetObject("Node_180", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Node_270 {
+            get {
+                object obj = ResourceManager.GetObject("Node_270", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Node_90 {
+            get {
+                object obj = ResourceManager.GetObject("Node_90", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap T_0 {
+            get {
+                object obj = ResourceManager.GetObject("T_0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap T_180 {
+            get {
+                object obj = ResourceManager.GetObject("T_180", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap T_270 {
+            get {
+                object obj = ResourceManager.GetObject("T_270", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap T_90 {
+            get {
+                object obj = ResourceManager.GetObject("T_90", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

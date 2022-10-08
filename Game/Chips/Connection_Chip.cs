@@ -10,13 +10,18 @@ namespace Connect_The_Chips.Game.Chips
     public abstract class Connection_Chip: GameObject
     {
         public abstract Direction[] Connections { get; }
+        public abstract Chips_Type Chip_Type { get; }
 
         public override string ToString()
         {
             return $"{GetType().Name} at {Position}";
         }
 
-        public Connection_Chip() { }
+        public Connection_Chip() 
+        {
+            Position = new Point(-1);
+            Rotation = Rotation.Degree_0;
+        }
 
         public Connection_Chip(Connection_Chip chip)
         {

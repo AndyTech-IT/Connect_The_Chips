@@ -46,12 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\Chips\Chips_Type.cs" />
     <Compile Include="Game\Chips\I_Chip.cs" />
     <Compile Include="Game\Chips\L_Chip.cs" />
     <Compile Include="Game\Chips\T_Chip.cs" />
     <Compile Include="Game\Chips_Pack.cs" />
     <Compile Include="Game\Chips\Connection_Chip.cs" />
-    <Compile Include="Game\Connection_Node.cs" />
+    <Compile Include="Game\Chips\Connection_Node.cs" />
     <Compile Include="Game\Direction.cs" />
     <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\Game_Controller.cs" />
@@ -120,6 +121,84 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="L_Chip_270.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Chip_BG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="L_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="L_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="L_180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="L_270.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="I_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="I_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="T_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="T_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="T_180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="T_270.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Chip_BG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\I_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\I_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\L_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\L_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\L_180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\L_270.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Node_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Node_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Node_180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Node_270.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\T_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\T_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\T_180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\T_270.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

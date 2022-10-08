@@ -10,6 +10,21 @@ namespace Connect_The_Chips.Game
 {
     public struct Round_Result
     {
-        public Connection_Chip[] Placed_Chips;
+        public Chips_Type[] Placed_Chips;
+        public Point[] Positions;
+        public Rotation[] Rotations;
+
+        public Round_Result(Connection_Chip[] placement_chips)
+        {
+            Placed_Chips = new Chips_Type[Game_Controller.CHIPS_PACK_SIZE];
+            Positions = new Point[Game_Controller.CHIPS_PACK_SIZE];
+            Rotations = new Rotation[Game_Controller.CHIPS_PACK_SIZE];
+            for (int i = 0; i < Game_Controller.CHIPS_PACK_SIZE; i++)
+            {
+                Placed_Chips[i] = placement_chips[i].Chip_Type;
+                Positions[i] = placement_chips[i].Position;
+                Rotations[i] = placement_chips[i].Rotation;
+            }
+        }
     }
 }

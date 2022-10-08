@@ -10,10 +10,10 @@ namespace Connect_The_Chips.Game
 {
     public struct Chips_Pack
     {
-        public readonly Connection_Chip[] Chips;
+        public readonly Chips_Type[] Chips;
         public readonly Point[] Empty_Positions;
 
-        public Chips_Pack(Connection_Chip[] chips, Point[] empty_positions)
+        public Chips_Pack(Chips_Type[] chips, Point[] empty_positions)
         {
             Empty_Positions = empty_positions;
             Chips = chips;

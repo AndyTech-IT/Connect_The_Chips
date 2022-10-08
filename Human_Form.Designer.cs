@@ -76,6 +76,7 @@
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button1.Location = new System.Drawing.Point(23, 46);
             this.button1.Margin = new System.Windows.Forms.Padding(10);
             this.button1.Name = "button1";
@@ -88,6 +89,7 @@
             // button2
             // 
             this.button2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button2.Location = new System.Drawing.Point(23, 269);
             this.button2.Margin = new System.Windows.Forms.Padding(10);
             this.button2.Name = "button2";
@@ -100,6 +102,7 @@
             // button3
             // 
             this.button3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button3.Location = new System.Drawing.Point(23, 493);
             this.button3.Margin = new System.Windows.Forms.Padding(10);
             this.button3.Name = "button3";

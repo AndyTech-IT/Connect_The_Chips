@@ -61,7 +61,7 @@ namespace Connect_The_Chips.Players
             Point[] placement_points = new Point[Game_Controller.CHIPS_PACK_SIZE];
             for (int i =0; i < Game_Controller.CHIPS_PACK_SIZE; i++)
             {
-                Point chip_pos = result.Placed_Chips[i].Position;
+                Point chip_pos = result.Positions[i];
                 if (placement_points.Contains(chip_pos))
                     throw new Exception($"Chip {i+1} owerplacing other round chip!");
                 placement_points[i] = chip_pos;

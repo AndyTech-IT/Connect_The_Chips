@@ -8,26 +8,33 @@ using Connect_The_Chips.Game.Chips;
 
 namespace Connect_The_Chips.Game
 {
-    public class Connection_Node: GameObject
+    public class Connection_Node : Connection_Chip
     {
-        public Direction Connection
+        public override Direction[] Connections
         {
             get
             {
                 switch (Rotation)
                 {
                     case Rotation.Degree_0:
-                        return Direction.Left;
+                        return new Direction[] { Direction.Right };
                     case Rotation.Degree_90:
-                        return Direction.Top;
+                        return new Direction[] { Direction.Top };
                     case Rotation.Degree_180:
-                        return Direction.Right;
+                        return new Direction[] { Direction.Left };
                     case Rotation.Degree_270:
-                        return Direction.Bottom;
+                        return new Direction[] { Direction.Bottom };
                     default:
                         throw new Exception($"Wrong node rotation {Rotation}!");
                 }
             }
+        }
+
+        public override Chips_Type Chip_Type => Chips_Type.Node;
+
+        public override string ToString()
+        {
+            return $"{GetType().Name} at {Position}";
         }
     }
 }
