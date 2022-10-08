@@ -4,12 +4,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Connect_The_Chips.Game.Chips;
 
 namespace Connect_The_Chips.Game
 {
-    public struct Round_Result
+    public class GameObject
     {
-        public Connection_Chip[] Placed_Chips;
+        public Point Position;
+        public int X => Position.X;
+        public int Y => Position.Y;
+
+        public Rotation Rotation;
     }
 }

@@ -9,6 +9,11 @@ namespace Connect_The_Chips.Game.Chips
 {
     public class L_Chip: Connection_Chip
     {
+        public L_Chip() { }
+        public L_Chip(Connection_Chip chip) : base(chip)
+        {
+        }
+
         public override Direction[] Connections
         {
             get

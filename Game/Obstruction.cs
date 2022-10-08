@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace Connect_The_Chips.Game
 {
-    public struct Obstruction
-    {
-        public readonly Point Position;
-    }
+    public class Obstruction: GameObject
+    {}
 }

@@ -14,28 +14,36 @@ namespace Connect_The_Chips.Players
 
         public Human_Player()
         {
-            _myform = new Human_Form();
+            _myform = new Human_Form(this);
+            _myform.Show();
+        }
+
+        public bool Try_Play(Round_Result result)
+        {
+            try
+            {
+                Place_Chips(result);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         protected override void On_ChipsGiven(Chips_Pack pack)
         {
             _myform.Get_Pack(pack);
-            while (_myform.ShowDialog() != DialogResult.OK)
-            {
-                if (_myform.DialogResult == DialogResult.Abort)
-                    return;
-            }
-            Place_Chips(_myform.Result);
         }
 
         protected override void On_GameFinished(Game_Result result)
         {
-            throw new NotImplementedException();
+            MessageBox.Show($"Result score: {result.Score}");
         }
 
         protected override void On_GameStarted(Map_Data data)
         {
-
+            _myform.Init_Map(data);
         }
     }
 }

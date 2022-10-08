@@ -38,6 +38,7 @@
             this.Name = "Game_Form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Connect The Chips";
+            this.Load += new System.EventHandler(this.Game_Form_Load);
             this.ResumeLayout(false);
 
         }

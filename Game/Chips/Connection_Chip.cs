@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace Connect_The_Chips.Game.Chips
 {
-    public abstract class Connection_Chip
+    public abstract class Connection_Chip: GameObject
     {
-        public Point Position;
-        public int X => Position.X;
-        public int Y => Position.Y;
-
-        public Rotation Rotation;
         public abstract Direction[] Connections { get; }
 
         public override string ToString()
         {
             return $"{GetType().Name} at {Position}";
+        }
+
+        public Connection_Chip() { }
+
+        public Connection_Chip(Connection_Chip chip)
+        {
+            Position = chip.Position;
+            Rotation = chip.Rotation;
         }
 
         public override bool Equals(object obj)

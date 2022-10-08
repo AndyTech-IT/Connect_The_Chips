@@ -35,6 +35,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.Reset_TSMI = new System.Windows.Forms.ToolStripMenuItem();
+            this.Accept_TSMI = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.Map_PB)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -43,7 +44,7 @@
             // Map_PB
             // 
             this.Map_PB.BackColor = System.Drawing.SystemColors.Control;
-            this.Map_PB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Map_PB.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Map_PB.Location = new System.Drawing.Point(197, 24);
             this.Map_PB.Name = "Map_PB";
             this.Map_PB.Size = new System.Drawing.Size(784, 691);
@@ -111,7 +112,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Reset_TSMI});
+            this.Reset_TSMI,
+            this.Accept_TSMI});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(981, 24);
@@ -124,6 +126,14 @@
             this.Reset_TSMI.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             this.Reset_TSMI.Size = new System.Drawing.Size(54, 20);
             this.Reset_TSMI.Text = "Сброс";
+            this.Reset_TSMI.Click += new System.EventHandler(this.Reset_TSMI_Click);
+            // 
+            // Accept_TSMI
+            // 
+            this.Accept_TSMI.Name = "Accept_TSMI";
+            this.Accept_TSMI.Size = new System.Drawing.Size(82, 20);
+            this.Accept_TSMI.Text = "Применить";
+            this.Accept_TSMI.Click += new System.EventHandler(this.Accept_TSMI_Click);
             // 
             // Human_Form
             // 
@@ -157,5 +167,6 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem Reset_TSMI;
+        private System.Windows.Forms.ToolStripMenuItem Accept_TSMI;
     }
 }

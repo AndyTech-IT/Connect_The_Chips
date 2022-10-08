@@ -14,7 +14,7 @@ namespace Connect_The_Chips.Game
             {
                 lock (_locker)
                 {
-                    if (Random == null)
+                    if (_generator == null)
                         throw new InvalidOperationException("Not inited!");
 
                     if (++_counter >= WASHING_VALUE)

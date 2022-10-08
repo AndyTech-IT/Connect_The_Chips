@@ -53,6 +53,7 @@
     <Compile Include="Game\Chips\Connection_Chip.cs" />
     <Compile Include="Game\Connection_Node.cs" />
     <Compile Include="Game\Direction.cs" />
+    <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\Game_Controller.cs" />
     <Compile Include="Game\Obstruction.cs" />
     <Compile Include="Game\RandomGenerator.cs" />

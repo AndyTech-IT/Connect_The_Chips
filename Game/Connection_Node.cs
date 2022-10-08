@@ -8,10 +8,8 @@ using Connect_The_Chips.Game.Chips;
 
 namespace Connect_The_Chips.Game
 {
-    public struct Connection_Node
+    public class Connection_Node: GameObject
     {
-        public readonly Point Point;
-        public readonly Rotation Rotation;
         public Direction Connection
         {
             get

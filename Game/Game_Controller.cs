@@ -12,7 +12,9 @@ namespace Connect_The_Chips.Game
     public class Game_Controller
     {
         public const int CHIPS_PACK_SIZE = 3;
-        public static readonly Size MAP_SIZE = new Size(2, 2);
+        public static int MAP_WIDTH => MAP_SIZE.Width;
+        public static int MAP_HEIGHT => MAP_SIZE.Height;
+        public static readonly Size MAP_SIZE = new Size(5, 5);
         public static readonly RandomGenerator RANDOM = new RandomGenerator();
         public static readonly Connection_Chip[] CHIPS_POOL = new Connection_Chip[] 
         { 
@@ -20,10 +22,14 @@ namespace Connect_The_Chips.Game
             new L_Chip{ Position = new Point(-1), Rotation = Rotation.Degree_0},
             new T_Chip{ Position = new Point(-1), Rotation = Rotation.Degree_0}
         };
+        private GameObject[] _all =>
+            _nodes.Cast<GameObject>()
+            .Union(_plaсed_chips.Cast<GameObject>())
+            .Union(_obstructions.Cast<GameObject>())
+            .OrderBy(o => -o.Y).ThenBy(o => -o.X).ToArray();
 
         private Obstruction[] _obstructions;
-        private Connection_Node[] _connection_Nodes;
-
+        private Connection_Node[] _nodes;
         private Connection_Chip[] _plaсed_chips;
 
         public Action<Map_Data> Game_Started;
@@ -42,13 +48,35 @@ namespace Connect_The_Chips.Game
                         result = result.Append(new Point(x, y)).ToArray();
                     }
                 }
-                return result.Where(p => _connection_Nodes.All(n => n.Point != p) && _obstructions.All(o => o.Position != p)).ToArray();
+                return result.Where(p => _all.All(o => o.Position != p)).ToArray();
             }
         }
 
-        private Connection_Chip[] Random_Chips => new object[3].Select(
-                    c => CHIPS_POOL[RANDOM.Random.Next(CHIPS_POOL.Length)]
-                    ).ToArray();
+        private Connection_Chip[] Random_Chips
+        {
+            get
+            {
+                Connection_Chip[] result = new Connection_Chip[CHIPS_POOL.Length];
+                for (int i = 0; i < CHIPS_POOL.Length; i++)
+                {
+                    Connection_Chip chip = CHIPS_POOL[RANDOM.Random.Next(CHIPS_POOL.Length)];
+                    if (chip is L_Chip)
+                    {
+                        result[i] = new L_Chip(chip);
+                    }
+                    else if (chip is T_Chip)
+                    {
+                        result[i] = new T_Chip(chip);
+                    }
+                    else if (chip is I_Chip)
+                    {
+                        result[i] = new I_Chip(chip);
+                    }
+
+                }
+                return result;
+            }
+        }
 
         public void On_ChipsPlaced(Round_Result result)
         {
@@ -61,14 +89,43 @@ namespace Connect_The_Chips.Game
         public void Start_Game(Player player)
         {
             player.Subscribe(this);
+
             Begin_Game();
         }
 
         private void Begin_Game()
         {
-            Game_Started?.Invoke(new Map_Data(_connection_Nodes, _obstructions));
-            Chips_Given?.Invoke(
-                new Chips_Pack(Random_Chips,Empty_Positions));
+            _obstructions = new Obstruction[0];
+            _plaсed_chips = new Connection_Chip[0];
+            _nodes = new Connection_Node[]
+            {
+                new Connection_Node() { Position = new Point(0, 1), Rotation = Rotation.Degree_0 },
+                new Connection_Node() { Position = new Point(1, 0), Rotation = Rotation.Degree_270 },
+                new Connection_Node() { Position = new Point(3, 0), Rotation = Rotation.Degree_270 }
+            };
+            for (int x = 0; x < MAP_WIDTH; x++)
+            {
+                Obstruction obstruction = new Obstruction() { Position = new Point(x, 0) };
+                if (_nodes.Any(n => n.Position == obstruction.Position) == false)
+                    _obstructions = _obstructions.Append(obstruction).ToArray();
+
+                obstruction = new Obstruction() { Position = new Point(x, MAP_HEIGHT - 1) };
+                if (_nodes.Any(n => n.Position == obstruction.Position) == false)
+                    _obstructions = _obstructions.Append(obstruction).ToArray();
+            }
+            for (int y = 1; y < MAP_WIDTH - 1; y++)
+            {
+                Obstruction obstruction = new Obstruction() { Position = new Point(0, y) };
+                if (_nodes.Any(n => n.Position == obstruction.Position) == false)
+                    _obstructions = _obstructions.Append(obstruction).ToArray();
+
+                obstruction = new Obstruction() { Position = new Point(MAP_WIDTH - 1, y) };
+                if (_nodes.Any(n => n.Position == obstruction.Position) == false)
+                    _obstructions = _obstructions.Append(obstruction).ToArray();
+            }
+            Game_Started?.Invoke(new Map_Data(_nodes, _obstructions));
+            Chips_Pack chips = new Chips_Pack(Random_Chips, Empty_Positions);
+            Chips_Given?.Invoke(chips);
         }
 
     }
