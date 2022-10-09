@@ -50,7 +50,6 @@
             this.Map_PB.Size = new System.Drawing.Size(784, 691);
             this.Map_PB.TabIndex = 0;
             this.Map_PB.TabStop = false;
-            this.Map_PB.MouseHover += new System.EventHandler(this.Map_PB_MouseHover);
             this.Map_PB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Map_PB_MouseMove);
             this.Map_PB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Map_PB_MouseUp);
             // 
@@ -151,7 +150,6 @@
             this.Name = "Human_Form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Human_Form";
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Human_Form_MouseUp);
             ((System.ComponentModel.ISupportInitialize)(this.Map_PB)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);

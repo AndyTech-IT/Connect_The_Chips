@@ -14,5 +14,16 @@ namespace Connect_The_Chips.Game
         public int Y => Position.Y;
 
         public Rotation Rotation;
+
+        public override bool Equals(object obj)
+        {
+            return obj is GameObject @object &&
+                   EqualityComparer<Point>.Default.Equals(Position, @object.Position);
+        }
+
+        public override int GetHashCode()
+        {
+            return -425505606 + Position.GetHashCode();
+        }
     }
 }

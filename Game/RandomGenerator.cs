@@ -8,7 +8,46 @@ namespace Connect_The_Chips.Game
 {
     public class RandomGenerator
     {
-        public Random Random
+        public int Next_Integer(int max_value)
+        {
+            return Random.Next(max_value);
+        }
+
+        public int Next_Integer(int min_value, int max_value)
+        {
+            return Random.Next(min_value, max_value);
+        }
+
+        public T Next_Item<T>(T[] source)
+        {
+            return source[Random.Next(source.Length)];
+        }
+
+        public int Next_Index<T>(T[] source)
+        {
+            return Random.Next(source.Length);
+        }
+
+        public T[] Next_Items<T>(T[] source, int count)
+        {
+            if (count == 0)
+                return new T[0];
+            if (count == source.Length)
+                return source;
+            if (count > source.Length)
+                throw new Exception($"Source array size less then {count}!");
+
+            T[] result = new T[count];
+            for (int i = 0; i < count; i++)
+            {
+                int index = Next_Index(source);
+                result[i] = source[index];
+                source = source.Take(index).Union(source.Skip(index+1)).ToArray();
+            }
+            return result;
+        }
+
+        private Random Random
         {
             get
             {

@@ -29,9 +29,6 @@ namespace Connect_The_Chips.Players
         private Bitmap Obstruction;
         private Bitmap Chip_BG;
 
-        public Round_Result Result => _result;
-        private Round_Result _result;
-
         private int _cell_size;
         private Size _image_size;
         private int _image_height => _image_size.Height;
@@ -60,10 +57,11 @@ namespace Connect_The_Chips.Players
             .Union(_placed_chips.Cast<GameObject>())
             .Union(_obstructions.Cast<GameObject>())
             .OrderBy(o=>-o.Y).ThenBy(o=>-o.X).ToArray();
-        private GameObject[] _all_chips =>
-            _nodes.Cast<GameObject>()
-            .Union(_placement_chips.Cast<GameObject>())
-            .Union(_placed_chips.Cast<GameObject>())
+
+        private Connection_Chip[] _all_chips =>
+            _nodes.Cast<Connection_Chip>()
+            .Union(_placement_chips.Cast<Connection_Chip>())
+            .Union(_placed_chips.Cast<Connection_Chip>())
             .OrderBy(o => -o.Y).ThenBy(o => -o.X).ToArray();
 
         private Button[] _buttons;
@@ -136,12 +134,6 @@ namespace Connect_The_Chips.Players
             Draw_Map();
         }
 
-        private void Human_Form_MouseUp(object sender, MouseEventArgs e)
-        {
-            _hover_chip = null;
-            _hover_chip_id = -1;
-        }
-
         private void Update_PB()
         {
             using (var g = Graphics.FromImage(Map_PB.Image))
@@ -163,12 +155,12 @@ namespace Connect_The_Chips.Players
                 }
 
                 // Draw chip
-                foreach (var gameoOject in _all_chips)
+                foreach (var chip in _all_chips)
                 {
-                    if (gameoOject.X == -1 && gameoOject.Y == -1)
+                    if (chip.X == -1 && chip.Y == -1)
                         continue;
-                    Point start = new Point(gameoOject.X * _cell_size - chip_border, gameoOject.Y * _cell_size - chip_border);
-                    g.DrawImage(Get_Chip_Image(gameoOject), start.X, start.Y, _cell_size + chip_border * 2, _cell_size + chip_border * 2);
+                    Point start = new Point(chip.X * _cell_size - chip_border, chip.Y * _cell_size - chip_border);
+                    g.DrawImage(Get_Chip_Image(chip), start.X, start.Y, _cell_size + chip_border * 2, _cell_size + chip_border * 2);
                 }
             }
             Map_PB.Refresh();
@@ -183,10 +175,17 @@ namespace Connect_The_Chips.Players
             GameObject right = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X + 1);
             GameObject left = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X - 1);
 
+            GameObject left_top = _all.FirstOrDefault(o => o.X == gameObject.X - 1 && o.Y == gameObject.Y - 1);
+            GameObject right_top = _all.FirstOrDefault(o => o.X == gameObject.X + 1 && o.Y == gameObject.Y - 1);
+            GameObject left_down = _all.FirstOrDefault(o => o.X == gameObject.X - 1 && o.Y == gameObject.Y + 1);
+            GameObject right_down = _all.FirstOrDefault(o => o.X == gameObject.X + 1 && o.Y == gameObject.Y + 1);
+
             // Cut bg
             Pen eracer = new Pen(Color.Transparent, CHIP_BG_BORDER * 2);
+            SolidBrush eracer_b = new SolidBrush(Color.Transparent);
             using (var bg_graphics = Graphics.FromImage(result))
             {
+                // Cut sides
                 bg_graphics.CompositingMode = CompositingMode.SourceCopy;
                 if (up != null)
                     bg_graphics.DrawLine(eracer, 0, 0, CHIP_BG_SIZE, 0);
@@ -197,29 +196,40 @@ namespace Connect_The_Chips.Players
                     bg_graphics.DrawLine(eracer, CHIP_BG_SIZE, 0, CHIP_BG_SIZE, CHIP_BG_SIZE);
                 if (left != null)
                     bg_graphics.DrawLine(eracer, 0, 0, 0, CHIP_BG_SIZE);
+
+                // Cut corners
+                if (left_top != null)
+                    bg_graphics.FillRectangle(eracer_b, 0, 0, CHIP_BG_BORDER, CHIP_BG_BORDER);
+                if (right_top != null)
+                    bg_graphics.FillRectangle(eracer_b, CHIP_BG_SIZE - CHIP_BG_BORDER, 0, CHIP_BG_BORDER, CHIP_BG_BORDER);
+
+                if (left_down != null)
+                    bg_graphics.FillRectangle(eracer_b, 0, CHIP_BG_SIZE - CHIP_BG_BORDER, CHIP_BG_BORDER, CHIP_BG_BORDER);
+                if (right_down != null)
+                    bg_graphics.FillRectangle(eracer_b, CHIP_BG_SIZE - CHIP_BG_BORDER, CHIP_BG_SIZE - CHIP_BG_BORDER, CHIP_BG_BORDER, CHIP_BG_BORDER);
             }
 
             return result;
         }
 
-        private Bitmap Get_Chip_Image(GameObject gameObject)
+        private Bitmap Get_Chip_Image(Connection_Chip chip)
         {
             Bitmap chip_image;
-            if (gameObject is L_Chip)
-                chip_image = new Bitmap(L_Chips[(int)gameObject.Rotation]);
-            else if (gameObject is T_Chip)
-                chip_image = new Bitmap(T_Chips[(int)gameObject.Rotation]);
-            else if (gameObject is I_Chip)
-                chip_image = new Bitmap(I_Chips[(int)gameObject.Rotation]);
-            else if (gameObject is Connection_Node)
-                chip_image = new Bitmap(Nodes[(int)gameObject.Rotation]);
+            if (chip is L_Chip)
+                chip_image = new Bitmap(L_Chips[(int)chip.Rotation]);
+            else if (chip is T_Chip)
+                chip_image = new Bitmap(T_Chips[(int)chip.Rotation]);
+            else if (chip is I_Chip)
+                chip_image = new Bitmap(I_Chips[(int)chip.Rotation]);
+            else if (chip is Connection_Node)
+                chip_image = new Bitmap(Nodes[(int)chip.Rotation]);
             else
-                throw new IndexOutOfRangeException($"Type {gameObject.GetType()} dont support chip image!");
+                throw new IndexOutOfRangeException($"Type {chip.GetType()} dont support chip image!");
 
-            GameObject up = _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y - 1);
-            GameObject down = _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y + 1);
-            GameObject right = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X + 1);
-            GameObject left = _all.FirstOrDefault(o => o.Y == gameObject.Y && o.X == gameObject.X - 1);
+            GameObject up = _all.FirstOrDefault(o => o.X == chip.X && o.Y == chip.Y - 1);
+            GameObject down = _all.FirstOrDefault(o => o.X == chip.X && o.Y == chip.Y + 1);
+            GameObject right = _all.FirstOrDefault(o => o.Y == chip.Y && o.X == chip.X + 1);
+            GameObject left = _all.FirstOrDefault(o => o.Y == chip.Y && o.X == chip.X - 1);
 
             // Cut chip
             Pen eracer = new Pen(Color.Transparent, CHIP_BORDER * 2);
@@ -273,11 +283,6 @@ namespace Connect_The_Chips.Players
             }
         }
 
-        private void Map_PB_MouseHover(object sender, EventArgs e)
-        {
-            
-        }
-
         private void Button_Click(object sender, EventArgs e)
         {
             if (sender is Button b)
@@ -297,27 +302,27 @@ namespace Connect_The_Chips.Players
 
             int mouse_x = e.X;
             int mouse_y = e.Y;
-            Text = $"{mouse_x}, {mouse_y}";
             mouse_x = mouse_x > 0 ? mouse_x / _cell_size : 0;
             mouse_y = mouse_y > 0 ? mouse_y / _cell_size : 0;
+            Point mouse_pos = new Point(mouse_x, mouse_y);
 
-            if (mouse_x == _hover_chip.Position.X && mouse_y == _hover_chip.Position.Y)
+            if (_hover_chip.Position == mouse_pos)
                 return;
 
             foreach (var gameObject in _all)
-                if (gameObject.X == mouse_x && gameObject.Y == mouse_y)
+                if (gameObject.Position == mouse_pos)
                     return;
 
-            _hover_chip.Position = new Point(mouse_x, mouse_y);
+            _hover_chip.Position = mouse_pos;
 
             Invoke((MethodInvoker) Update_PB);
         }
 
         private void Accept_TSMI_Click(object sender, EventArgs e)
         {
-            _result = new Round_Result(_placement_chips);
+            Round_Result result = new Round_Result(_player, _placement_chips);
             Connection_Chip[] temp = _placement_chips;
-            if (_player.Try_Play(Result))
+            if (_player.Try_Play(result))
             {
                 _placed_chips = _placed_chips.Union(temp).ToArray();
                 Update_PB();
