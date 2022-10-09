@@ -53,6 +53,7 @@
     <Compile Include="Game\Chips_Pack.cs" />
     <Compile Include="Game\Chips\Connection_Chip.cs" />
     <Compile Include="Game\Chips\Connection_Node.cs" />
+    <Compile Include="Game\Connection_Tree.cs" />
     <Compile Include="Game\Direction.cs" />
     <Compile Include="Game\GameObject.cs" />
     <Compile Include="Game\Game_Controller.cs" />
@@ -109,51 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Neural_Network\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_Chip_0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_Chip_90.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_Chip_180.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_Chip_270.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Chip_BG.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_90.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_180.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="L_270.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="I_0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="I_90.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="T_0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="T_90.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="T_180.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="T_270.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Chip_BG.png" />

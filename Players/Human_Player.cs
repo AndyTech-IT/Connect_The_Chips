@@ -38,7 +38,7 @@ namespace Connect_The_Chips.Players
 
         protected override void On_GameFinished(Game_Result result)
         {
-            MessageBox.Show($"Result score: {result.Score}");
+            _myform.Get_Result(result);
         }
 
         protected override void On_GameStarted(Map_Data data)

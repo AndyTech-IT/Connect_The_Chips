@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Connect_The_Chips.Game
 {
-    public enum Direction
+    public class Connection_Tree
     {
-        Top = 1,
-        Left = 2,
-        Bottom = -1,
-        Right = -2
+        public Point[] Nodes_Points;
+        public Point[] Transfer_Chips;
     }
 }

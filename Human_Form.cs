@@ -45,6 +45,8 @@ namespace Connect_The_Chips.Players
         private Connection_Chip[] _placement_chips;
         private Connection_Chip[] _placed_chips;
 
+        private bool _game_over;
+
 
         private Color _placed_color = Color.GreenYellow;
         private Color _not_placed_color = Color.Yellow;
@@ -112,6 +114,34 @@ namespace Connect_The_Chips.Players
             Update_PB();
         }
 
+        public void Get_Result(Game_Result result)
+        {
+            SolidBrush brush = new SolidBrush(Color.Black);
+            Font font = new Font(Name, 12);
+            StringFormat format = new StringFormat();
+            Pen pen = new Pen(Color.Red, CHIP_BG_BORDER);
+            format.Alignment = StringAlignment.Center;
+            format.LineAlignment = StringAlignment.Center;
+            using (var g = Graphics.FromImage(Map_PB.Image))
+            {
+                foreach (var tree in result.Connections)
+                {
+                    foreach (var point in tree.Nodes_Points)
+                    {
+                        Point start_point = new Point(point.X * _cell_size + _cell_size/3, point.Y * _cell_size + _cell_size / 3);
+                        Rectangle rectangle = new Rectangle(start_point.X, start_point.Y, _cell_size / 3, _cell_size / 3);
+                        brush.Color = Color.White;
+                        g.FillRectangle(brush, rectangle);
+                        brush.Color = Color.Black;
+                        g.DrawString(tree.Nodes_Points.Length.ToString(), Font, brush, rectangle, format);
+                    }
+                }
+            }
+            Map_PB.Refresh();
+            MessageBox.Show($"Result score: {result.Score}");
+            _game_over = true;
+        }
+
         public void Init_Map(Map_Data map)
         {
             int margin = 20;
@@ -129,13 +159,15 @@ namespace Connect_The_Chips.Players
             _nodes = map.Nodes;
 
             _placed_chips = new Connection_Chip[0];
-
+            _game_over = false;
             Init_ChipsImages();
             Draw_Map();
         }
 
         private void Update_PB()
         {
+            if (_game_over)
+                return;
             using (var g = Graphics.FromImage(Map_PB.Image))
             {
                 g.DrawImage(_map, Point.Empty);

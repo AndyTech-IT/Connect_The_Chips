@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
+using System.Xml.Linq;
 using Connect_The_Chips.Game.Chips;
 using Connect_The_Chips.Players;
 
@@ -60,7 +61,7 @@ namespace Connect_The_Chips.Game
             }
         }
 
-        private Chips_Type[] Random_Chips => GENERATOR.Next_Items(CHIPS_POOL, CHIPS_PACK_SIZE);
+        private Chips_Type[] Random_Chips => GENERATOR.Next_Items(CHIPS_POOL, CHIPS_PACK_SIZE, true);
 
         public void On_ChipsPlaced(Round_Result result)
         {
@@ -89,8 +90,8 @@ namespace Connect_The_Chips.Game
             }
             _plaсed_chips = _plaсed_chips.Union(result_chips).ToArray();
 
-            if (_round == ROUNDS_COUNT)
-                return;
+            if (_round++ == ROUNDS_COUNT)
+                End_Game();
             else
                 NewRound();
         }
@@ -100,6 +101,70 @@ namespace Connect_The_Chips.Game
             player.Subscribe(this);
 
             Begin_Game();
+        }
+
+        private void End_Game()
+        {
+            Connection_Tree[] connections = new Connection_Tree[0];
+            foreach(var node in _nodes)
+            {
+                if (connections.Any(c => c.Nodes_Points.Any(p => p == node.Position)))
+                    continue;
+
+                GameObject naibor = Get_Naibor(node, node.Connections[0]);
+                if (naibor is Connection_Chip chip && chip.Connections.Any(c => (int)c == -(int)node.Connections[0]))
+                    connections = connections.Append(Build_Tree(node.Connections[0], chip, node)).ToArray();
+            }
+
+            Game_Finished?.Invoke(new Game_Result(connections, _all));;
+        }
+
+        private Connection_Tree Build_Tree(Direction direction, Connection_Chip chip, Connection_Node start_node = null)
+        {
+            Direction skip_dir = (Direction)(-(int)direction);
+
+            Point[] chips = new Point[] { chip.Position };
+            Point[] nodes = new Point[0];
+            if (start_node != null)
+                nodes = new Point[] { start_node.Position };
+
+            foreach (var dir in chip.Connections)
+            {
+                if (dir == skip_dir)
+                    continue;
+                if (Get_Naibor(chip, dir) is Connection_Node node)
+                {
+                    if ((int)node.Connections[0] == -(int)dir)
+                        nodes = nodes.Append(node.Position).ToArray();
+                    continue;
+                }
+                if (Get_Naibor(chip, dir) is Connection_Chip naibor)
+                {
+                    if (naibor.Connections.Any(d => (int)d == -(int)dir) == false)
+                        continue;
+                    Connection_Tree branch =  Build_Tree(dir, naibor);
+                    chips = chips.Union(branch.Transfer_Chips).ToArray();
+                    nodes = nodes.Union(branch.Nodes_Points).ToArray();
+                }
+            }
+            return new Connection_Tree() { Nodes_Points = nodes, Transfer_Chips = chips };
+        }
+
+        private GameObject Get_Naibor(GameObject gameObject, Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Top:
+                    return _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y - 1);
+                case Direction.Left:
+                    return _all.FirstOrDefault(o => o.X == gameObject.X - 1 && o.Y == gameObject.Y);
+                case Direction.Bottom:
+                    return _all.FirstOrDefault(o => o.X == gameObject.X && o.Y == gameObject.Y + 1);
+                case Direction.Right:
+                    return _all.FirstOrDefault(o => o.X == gameObject.X + 1 && o.Y == gameObject.Y);
+                default:
+                    throw new Exception($"Direction {direction} dont supported!");
+            }
         }
 
         private void Begin_Game()
@@ -161,7 +226,6 @@ namespace Connect_The_Chips.Game
 
         private void NewRound()
         {
-            _round++;
             Chips_Pack chips = new Chips_Pack(Random_Chips, Empty_Positions);
             Chips_Given?.Invoke(chips);
         }

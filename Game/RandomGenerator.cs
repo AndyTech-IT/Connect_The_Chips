@@ -28,13 +28,11 @@ namespace Connect_The_Chips.Game
             return Random.Next(source.Length);
         }
 
-        public T[] Next_Items<T>(T[] source, int count)
+        public T[] Next_Items<T>(T[] source, int count, bool repiats = false)
         {
             if (count == 0)
                 return new T[0];
-            if (count == source.Length)
-                return source;
-            if (count > source.Length)
+            if (repiats == false && count > source.Length)
                 throw new Exception($"Source array size less then {count}!");
 
             T[] result = new T[count];
@@ -42,7 +40,8 @@ namespace Connect_The_Chips.Game
             {
                 int index = Next_Index(source);
                 result[i] = source[index];
-                source = source.Take(index).Union(source.Skip(index+1)).ToArray();
+                if (repiats == false)
+                    source = source.Take(index).Union(source.Skip(index+1)).ToArray();
             }
             return result;
         }
