@@ -19,11 +19,16 @@ namespace Connect_The_Chips
         {
             InitializeComponent();
             Game_Controller game = new Game_Controller();
-            Human_Player player = new Human_Player();
+            AI_Player player = new AI_Player();
             game.Start_Game(player);
         }
 
         private void Game_Form_Load(object sender, EventArgs e)
+        {
+            Hide();
+        }
+
+        private void Game_Form_Shown(object sender, EventArgs e)
         {
             Hide();
         }

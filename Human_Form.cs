@@ -12,6 +12,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RandomGenerator;
 
 namespace Connect_The_Chips.Players
 {
@@ -87,6 +88,15 @@ namespace Connect_The_Chips.Players
             Nodes = new Bitmap[4] { new Bitmap(Resources.Node_0), new Bitmap(Resources.Node_90), new Bitmap(Resources.Node_180), new Bitmap(Resources.Node_270), };
         }
 
+        public void Set_Map(GameObject[] gameObjects)
+        {
+            _obstructions = gameObjects.Where(o => o is Obstruction).Cast<Obstruction>().ToArray();
+            _nodes = gameObjects.Where(o => o is Connection_Node).Cast<Connection_Node>().ToArray();
+            _placed_chips = gameObjects.Where(o => o is Connection_Node == false && o is Connection_Chip).Cast<Connection_Chip>().ToArray();
+            _placement_chips = new Connection_Chip[0];
+            Update_PB();
+        }
+
         public void Get_Pack(Chips_Pack pack)
         {
             _placement_chips = new Connection_Chip[Game_Controller.CHIPS_PACK_SIZE];
@@ -124,8 +134,9 @@ namespace Connect_The_Chips.Players
             format.LineAlignment = StringAlignment.Center;
             using (var g = Graphics.FromImage(Map_PB.Image))
             {
-                foreach (var tree in result.Connections)
+                for (int i = 0; i < result.Connections.Length;i++)
                 {
+                    var tree = result.Connections[i];
                     foreach (var point in tree.Nodes_Points)
                     {
                         Point start_point = new Point(point.X * _cell_size + _cell_size/3, point.Y * _cell_size + _cell_size / 3);
@@ -133,7 +144,7 @@ namespace Connect_The_Chips.Players
                         brush.Color = Color.White;
                         g.FillRectangle(brush, rectangle);
                         brush.Color = Color.Black;
-                        g.DrawString(tree.Nodes_Points.Length.ToString(), Font, brush, rectangle, format);
+                        g.DrawString(result.Connections_Score[i].ToString(), Font, brush, rectangle, format);
                     }
                 }
             }
@@ -288,7 +299,7 @@ namespace Connect_The_Chips.Players
             {
                 g.Clear(Color.White);
 
-                Pen p = new Pen(Color.White, 2);
+                Pen p = new Pen(Color.Black, 2);
                 for (int y = 1; y < _mesh_height; y++)
                     g.DrawLine(p, 0, y * _cell_size, _image_width, y * _cell_size);
                 for (int x = 1; x < _mesh_width; x++)

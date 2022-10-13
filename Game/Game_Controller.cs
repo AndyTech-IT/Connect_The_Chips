@@ -8,6 +8,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Xml.Linq;
 using Connect_The_Chips.Game.Chips;
 using Connect_The_Chips.Players;
+using RandomGenerator;
 
 namespace Connect_The_Chips.Game
 {
@@ -21,7 +22,7 @@ namespace Connect_The_Chips.Game
         public static int MAP_HEIGHT => MAP_SIZE.Height;
 
         public static readonly Size MAP_SIZE = new Size(7, 7);
-        public static readonly RandomGenerator GENERATOR = new RandomGenerator();
+        public static readonly Random_Generator GENERATOR = new Random_Generator();
         public static readonly Chips_Type[] CHIPS_POOL = new Chips_Type[] 
         { 
             Chips_Type.I_Chip,
@@ -115,7 +116,6 @@ namespace Connect_The_Chips.Game
                 if (naibor is Connection_Chip chip && chip.Connections.Any(c => (int)c == -(int)node.Connections[0]))
                     connections = connections.Append(Build_Tree(node.Connections[0], chip, node)).ToArray();
             }
-
             Game_Finished?.Invoke(new Game_Result(connections, _all));;
         }
 

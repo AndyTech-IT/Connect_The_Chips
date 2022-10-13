@@ -4,10 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Connect_The_Chips.Game
+namespace RandomGenerator
 {
-    public class RandomGenerator
+    public class Random_Generator
     {
+        public double Next_Double(double max_value)
+        {
+            return Random.NextDouble() * max_value;
+        }
+        public double Next_Double(double min_value, double max_value)
+        {
+            return Random.NextDouble() * (max_value - min_value);
+        }
+
         public int Next_Integer(int max_value)
         {
             return Random.Next(max_value);
@@ -41,7 +50,7 @@ namespace Connect_The_Chips.Game
                 int index = Next_Index(source);
                 result[i] = source[index];
                 if (repiats == false)
-                    source = source.Take(index).Union(source.Skip(index+1)).ToArray();
+                    source = source.Take(index).Union(source.Skip(index + 1)).ToArray();
             }
             return result;
         }
@@ -71,7 +80,7 @@ namespace Connect_The_Chips.Game
         private int _counter;
         private readonly object _locker;
 
-        public RandomGenerator()
+        public Random_Generator()
         {
             _generator = new Random();
             _counter = 0;
