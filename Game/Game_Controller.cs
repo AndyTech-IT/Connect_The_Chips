@@ -33,6 +33,7 @@ namespace Connect_The_Chips.Game
         public Action<Map_Data> Game_Started;
         public Action<Chips_Pack> Chips_Given;
         public Action<Game_Result> Game_Finished;
+        public Action<int> Indexed_Game_Finished;
 
         private GameObject[] _all =>
             _nodes.Cast<GameObject>()
@@ -44,7 +45,10 @@ namespace Connect_The_Chips.Game
         private Connection_Node[] _nodes;
         private Connection_Chip[] _plaсed_chips;
 
+        private int _index;
         private int _round;
+
+        private Game_Controller _sync_game;
 
         private Point[] Empty_Positions
         {
@@ -93,15 +97,27 @@ namespace Connect_The_Chips.Game
 
             if (_round++ == ROUNDS_COUNT)
                 End_Game();
-            else
+            else if (_sync_game is null)
                 NewRound();
         }
 
-        public void Start_Game(Player player)
+        public Game_Controller(Game_Controller sync_game = null)
+        {
+            _sync_game = sync_game;
+            if (sync_game is Game_Controller)
+            {
+                sync_game.Game_Started += On_Sync_Game_Started;
+                sync_game.Chips_Given += On_Sync_Game_Chips_Given;
+            }
+        }
+
+        public void Start_Game(Player player, int index = -1)
         {
             player.Subscribe(this);
+            _index = index;
 
-            Begin_Game();
+            if (_sync_game is null)
+                Begin_Game();
         }
 
         private void End_Game()
@@ -116,7 +132,9 @@ namespace Connect_The_Chips.Game
                 if (naibor is Connection_Chip chip && chip.Connections.Any(c => (int)c == -(int)node.Connections[0]))
                     connections = connections.Append(Build_Tree(node.Connections[0], chip, node)).ToArray();
             }
-            Game_Finished?.Invoke(new Game_Result(connections, _all));;
+            Game_Finished?.Invoke(new Game_Result(connections, _all));
+            if (_index != -1)
+                Indexed_Game_Finished?.Invoke(_index);
         }
 
         private Connection_Tree Build_Tree(Direction direction, Connection_Chip chip, Connection_Node start_node = null)
@@ -165,6 +183,15 @@ namespace Connect_The_Chips.Game
                 default:
                     throw new Exception($"Direction {direction} dont supported!");
             }
+        }
+
+        private void On_Sync_Game_Started(Map_Data sync_data)
+        {
+            _obstructions = sync_data.Obstructions;
+            _plaсed_chips = new Connection_Chip[0];
+            _nodes = sync_data.Nodes;
+            _round = 0;
+            Game_Started?.Invoke(sync_data);
         }
 
         private void Begin_Game()
@@ -224,6 +251,11 @@ namespace Connect_The_Chips.Game
             NewRound();
         }
 
+        public void On_Sync_Game_Chips_Given(Chips_Pack sync_pack)
+        {
+            Chips_Pack chips = new Chips_Pack(sync_pack.Chips, Empty_Positions);
+            Chips_Given?.Invoke(chips);
+        }
         private void NewRound()
         {
             Chips_Pack chips = new Chips_Pack(Random_Chips, Empty_Positions);

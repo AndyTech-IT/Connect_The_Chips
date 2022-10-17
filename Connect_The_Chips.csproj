@@ -61,6 +61,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AITrain_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AITrain_Form.Designer.cs">
+      <DependentUpon>AITrain_Form.cs</DependentUpon>
+    </Compile>
     <Compile Include="Game\Chips\Chips_Type.cs" />
     <Compile Include="Game\Chips\Chip_Constructor.cs" />
     <Compile Include="Game\Chips\I_Chip.cs" />
@@ -90,16 +96,19 @@
     <Compile Include="Human_Form.Designer.cs">
       <DependentUpon>Human_Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Neular_Network\InputMap.cs" />
-    <Compile Include="Neular_Network\Marked_Placement.cs" />
-    <Compile Include="Neular_Network\Network_Struct.cs" />
-    <Compile Include="Neular_Network\NeuralNetwork.cs" />
+    <Compile Include="Neural_Network\InputMap.cs" />
+    <Compile Include="Neural_Network\Marked_Placement.cs" />
+    <Compile Include="Neural_Network\Network_Struct.cs" />
+    <Compile Include="Neural_Network\NeuralNetwork.cs" />
     <Compile Include="Players\AI_Player.cs" />
     <Compile Include="Players\Human_Player.cs" />
     <Compile Include="Players\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\Round_Result.cs" />
+    <EmbeddedResource Include="AITrain_Form.resx">
+      <DependentUpon>AITrain_Form.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Game_Form.resx">
       <DependentUpon>Game_Form.cs</DependentUpon>
     </EmbeddedResource>

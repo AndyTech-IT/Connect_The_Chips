@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace Connect_The_Chips.Neular_Network
+namespace Neural_Network
 {
     public class InputMap
     {
@@ -23,7 +23,7 @@ namespace Connect_The_Chips.Neular_Network
         public double[][][] With_Chip(Connection_Chip chip)
         {
             double[][][] result = Map;
-            result[2][chip.Y - 1][chip.X - 1] = ((int)chip.Rotation + 1) / ((int)Rotation.Degree_270 + 2);
+            result[2][chip.Y - 1][chip.X - 1] = -((int)chip.Chip_Type + 1) / ((int)Chips_Type.I_Chip + 2);
             return result;
         }
 
@@ -80,8 +80,8 @@ namespace Connect_The_Chips.Neular_Network
             if (chips is null)
                 return;
 
-            foreach (GameObject chip in chips)
-                Map[2][chip.Y - 1][chip.X - 1] = ((int)chip.Rotation + 1) / ((int)Rotation.Degree_270 + 2);
+            foreach (Connection_Chip chip in chips)
+                Map[2][chip.Y - 1][chip.X - 1] = ((int)chip.Chip_Type + 1) / ((int)Chips_Type.I_Chip + 2);
         }
     }
 }

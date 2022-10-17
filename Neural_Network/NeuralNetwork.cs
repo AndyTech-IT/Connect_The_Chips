@@ -2,74 +2,37 @@
 using System;
 using System.IO;
 using RandomGenerator;
-using System.Linq;
+using System.Security.Cryptography;
 
 namespace Neural_Network
 {
-    public class NeuralNetwork
+    public class NeuralNetwork : IComparable<NeuralNetwork>
     {
+        public readonly static int[] STRUCT = { 8 + 10 + 10, 10 + 10 + 8, 10 };
         public const string FILE_EXSTANTION = "nnp";
 
         public double Fitnes => _fitness;
-
         private static Random_Generator _generator = new Random_Generator();
-        /// <summary>
-        /// Network architecture
-        /// </summary>
-        private Network_Struct NetworkStruct;
-        /// <summary>
-        /// Layers sizes array
-        /// </summary>
-        private int[] layers_sizes;
 
+        private int[] layers;//layers
+        private double[][] neurons;//neurons
+        private double[][] biases;//biasses
+        private double[][][] weights;//weights
 
-        private double[][] Inputs_Neurons => neurons_outputs.Take(NetworkStruct.InputLayers_Count).ToArray();
-        private double[][] Hidden_Neurons => neurons_outputs.Skip(NetworkStruct.InputLayers_Count).Take(NetworkStruct.HiddenLayers_Count).ToArray();
-        private double[] Outputs_Neurons => neurons_outputs.Last().ToArray();
+        private double _fitness;//fitness
 
-        /// <summary>
-        /// Neurons output value
-        /// </summary>
-        private double[][] neurons_outputs;
-        /// <summary>
-        /// Biasis neurons output
-        /// </summary>
-        private double[][] biases;
-        /// <summary>
-        /// Neurons weights coefficients
-        /// </summary>
-        private double[][][] weights;
-
-        /// <summary>
-        /// Network fitness score
-        /// </summary>
-        private double _fitness;
-
-        public NeuralNetwork(Network_Struct network_struct)
+        public NeuralNetwork(Network_Struct layers)
         {
-            NetworkStruct = network_struct;
-            layers_sizes = new int[NetworkStruct.InputLayers_Count + NetworkStruct.HiddenLayers_Count + 1];
-            int index = 0;
-
-            // Inputs
-            for (int i = 0; i < NetworkStruct.InputLayers_Count; i++, index++)
+            this.layers = new int[layers.HiddenLayers_Count + 2];
+            this.layers[0] = layers.InputLayer_Size;
+            for (int i = 0; i < layers.HiddenLayers_Count; i++)
             {
-                layers_sizes[index] = NetworkStruct.InputLayers_Sizes[i];
+                this.layers[1+i] = layers.HiddenLayers_Sizes[i];
             }
-            // Hiddens
-            for (int i = 0; i < NetworkStruct.HiddenLayers_Count; i++, index++)
-            {
-                layers_sizes[index] = NetworkStruct.HiddenLayers_Sizes[i];
-            }
-            //Outputs
-            layers_sizes[index] = NetworkStruct.OutputLayer_Size;
-
+            this.layers[layers.HiddenLayers_Count + 1] = layers.OutputLayer_Size;
             _fitness = 0;
-            neurons_outputs = layers_sizes.Select(size => new double[size]).ToArray(); 
-            biases = layers_sizes.Select(size => new double[size][].Select(bias => _generator.Next_Double(-0.5, 0.5)).ToArray()).ToArray();
-            weights = new double[0][][];
-
-            //InitBiases();
+            InitNeurons();
+            InitBiases();
             InitWeights();
         }
 
@@ -78,13 +41,23 @@ namespace Neural_Network
             _fitness += value;
         }
 
+        private void InitNeurons()//create empty storage array for the neurons in the network.
+        {
+            List<double[]> neuronsList = new List<double[]>();
+            for (int i = 0; i < layers.Length; i++)
+            {
+                neuronsList.Add(new double[layers[i]]);
+            }
+            neurons = neuronsList.ToArray();
+        }
+
         private void InitBiases()//initializes and populates array for the biases being held within the network.
         {
             List<double[]> biasList = new List<double[]>();
-            for (int i = 0; i < layers_sizes.Length; i++)
+            for (int i = 0; i < layers.Length; i++)
             {
-                double[] bias = new double[layers_sizes[i]];
-                for (int j = 0; j < layers_sizes[i]; j++)
+                double[] bias = new double[layers[i]];
+                for (int j = 0; j < layers[i]; j++)
                 {
                     bias[j] = _generator.Next_Double(-0.5, 0.5);
                 }
@@ -96,16 +69,16 @@ namespace Neural_Network
         private void InitWeights()//initializes random array for the weights being held in the network.
         {
             List<double[][]> weightsList = new List<double[][]>();
-            for (int i = 1; i < layers_sizes.Length; i++)
+            for (int i = 1; i < layers.Length; i++)
             {
                 List<double[]> layerWeightsList = new List<double[]>();
-                int neuronsInPreviousLayer = layers_sizes[i - 1];
-                for (int j = 0; j < neurons_outputs[i].Length; j++)
+                int neuronsInPreviousLayer = layers[i - 1];
+                for (int j = 0; j < neurons[i].Length; j++)
                 {
                     double[] neuronWeights = new double[neuronsInPreviousLayer];
                     for (int k = 0; k < neuronsInPreviousLayer; k++)
                     {
-                        double sd = 1f / ((neurons_outputs[i].Length + neuronsInPreviousLayer) / 2f);
+                        double sd = 1f / ((neurons[i].Length + neuronsInPreviousLayer) / 2f);
                         neuronWeights[k] = _generator.Next_Double(-sd, sd);
                     }
                     layerWeightsList.Add(neuronWeights);
@@ -115,53 +88,30 @@ namespace Neural_Network
             weights = weightsList.ToArray();
         }
 
-        /// <summary>
-        /// Feed forward, inputs >==> outputs.
-        /// </summary>
-        /// <param name="inputs">Input layer data arr</param>
-        /// <returns>Output layer data arr</returns>
-        public double[] FeedForward(double[][] inputs)
+        public double[] FeedForward(double[] inputs)//feed forward, inputs >==> outputs.
         {
-            if (inputs.Length != Inputs_Neurons.Length)
-                throw new ArgumentOutOfRangeException(nameof(inputs));
-
-            // Fill inputs layer
             for (int i = 0; i < inputs.Length; i++)
             {
-                int prev_layer = i - 1;
-                for (int j = 0; j < inputs[i].Length; j++)
-                {
-                    if (i == 0)
-                    {
-                        neurons_outputs[i][j] = inputs[i][j];
-                        continue;
-                    }
-                    double value = inputs[i][j];
-                    for (int k = 0; k < neurons_outputs[prev_layer].Length; k++)
-                    {
-                        value += weights[prev_layer][j][k] * neurons_outputs[prev_layer][k];
-                    }
-                    neurons_outputs[i][j] = Activate(value + biases[i][j]);
-                }
+                neurons[0][i] = inputs[i];
             }
-            // Feed forward
-            for (int i = Inputs_Neurons.Length; i < layers_sizes.Length; i++)
+            for (int i = 1; i < layers.Length; i++)
             {
-                int prev_layer = i - 1;
-                for (int j = 0; j < neurons_outputs[i].Length; j++)
+                int layer = i - 1;
+                for (int j = 0; j < neurons[i].Length; j++)
                 {
                     double value = 0f;
-                    for (int k = 0; k < neurons_outputs[prev_layer].Length; k++)
+                    for (int k = 0; k < neurons[layer].Length; k++)
                     {
-                        value += weights[prev_layer][j][k] * neurons_outputs[prev_layer][k];
+                        value += weights[layer][j][k] * neurons[layer][k];
                     }
-                    neurons_outputs[i][j] = Activate(value + biases[i][j]);
+                    neurons[i][j] = activate(value + biases[i][j]);
                 }
+                layer = 0;
             }
-            return Outputs_Neurons;
+            return neurons[neurons.Length - 1];
         }
 
-        private static double Activate(double value)
+        public double activate(double value)
         {
             return Math.Tanh(value);
         }
@@ -172,7 +122,7 @@ namespace Neural_Network
             {
                 for (int j = 0; j < biases[i].Length; j++)
                 {
-                    biases[i][j] = _generator.Next_Double(1) <= chance ? biases[i][j] += _generator.Next_Double(1) * val : biases[i][j];
+                    biases[i][j] = (_generator.Next_Double(1) <= chance) ? biases[i][j] += _generator.Next_Double(-val, val) : biases[i][j];
                     if (biases[i][j] > 1)
                         biases[i][j] = 1;
                     if (biases[i][j] < -1)
@@ -187,7 +137,7 @@ namespace Neural_Network
                 {
                     for (int k = 0; k < weights[i][j].Length; k++)
                     {
-                        weights[i][j][k] = _generator.Next_Double(1) <= chance ? weights[i][j][k] += _generator.Next_Double(1) * val : weights[i][j][k];
+                        weights[i][j][k] = (_generator.Next_Double(1) <= chance) ? weights[i][j][k] += _generator.Next_Double(-val, val) : weights[i][j][k];
                         if (weights[i][j][k] > 1)
                             weights[i][j][k] = .99;
                         if (weights[i][j][k] < -1)
@@ -204,7 +154,7 @@ namespace Neural_Network
                 for (int j = 0; j < biases[i].Length; j++)
                 {
                     if (_generator.Next_Double(1) <= chance)
-                        biases[i][j] = other.biases[i][j];
+                        biases[i][j] =  other.biases[i][j];
                 }
             }
 
@@ -219,6 +169,18 @@ namespace Neural_Network
                     }
                 }
             }
+        }
+
+        public int CompareTo(NeuralNetwork other) //Comparing For NeuralNetworks performance.
+        {
+            if (other == null) return 1;
+
+            if (_fitness > other._fitness)
+                return 1;
+            else if (_fitness < other._fitness)
+                return -1;
+            else
+                return 0;
         }
 
         public NeuralNetwork Copy(NeuralNetwork nn) //For creatinga deep copy, to ensure arrays are serialzed.

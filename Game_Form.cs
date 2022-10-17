@@ -18,9 +18,8 @@ namespace Connect_The_Chips
         public Game_Form()
         {
             InitializeComponent();
-            Game_Controller game = new Game_Controller();
-            AI_Player player = new AI_Player();
-            game.Start_Game(player);
+            new AITrain_Form().ShowDialog();
+            new Game_Controller().Start_Game(new AI_Player());
         }
 
         private void Game_Form_Load(object sender, EventArgs e)
@@ -30,7 +29,7 @@ namespace Connect_The_Chips
 
         private void Game_Form_Shown(object sender, EventArgs e)
         {
-            Hide();
+            //Close();
         }
     }
 }
