@@ -18,8 +18,13 @@ namespace Connect_The_Chips
         public Game_Form()
         {
             InitializeComponent();
-            new AITrain_Form().ShowDialog();
-            new Game_Controller().Start_Game(new AI_Player());
+            // Тренеровка нейросетей
+            //new AITrain_Form().ShowDialog();
+            // Демонстрация работы нейросетей
+            //new Game_Controller().Start_Game(new AI_Player());
+
+            // Запуск игры для игрока
+            new Game_Controller().Start_Game(new Human_Player());
         }
 
         private void Game_Form_Load(object sender, EventArgs e)
